@@ -50,27 +50,27 @@ async def select(message: types.Message):
         """)
 
 
-@dp.message_handler(lambda message: message.text == "Premyera")
+@dp.message_handler(lambda message: message.text == "◾️ Premyera ◾️️")
 async def show_prem(message: types.Message):
     await message.answer("Premyeralardan birini tanlang:", reply_markup=prem_button)
 
 
-@dp.message_handler(lambda message: message.text == "Serial")
+@dp.message_handler(lambda message: message.text == "◾️ Serial◾️ ")
 async def show_ser(message: types.Message):
     await message.answer("Seriallardan birini tanlang:", reply_markup=ser_button)
 
 
-@dp.message_handler(lambda message: message.text == "Kinolar")
+@dp.message_handler(lambda message: message.text == "◾️ Kinolar ◾️")
 async def show_movie(message: types.Message):
     await message.answer("Kinolardan birini tanlang:", reply_markup=movie_button)
 
 
-@dp.message_handler(lambda message: message.text == "Multfilm")
+@dp.message_handler(lambda message: message.text == "◾️ Multfilm ◾️")
 async def show_cartoon(message: types.Message):
     await message.answer("Multfilmlardan birini tanlang:", reply_markup=cartoon_button)
 
 
-@dp.message_handler(lambda message: message.text == "Back")
+@dp.message_handler(lambda message: message.text == "🔙")
 async def back(message: types.Message):
     await message.answer("Bo'limlardan birini tanlang:", reply_markup=menu_button)
 
