@@ -6,16 +6,21 @@ class Database:
     @staticmethod
     def connect(query, query_type):
         database = db.connect(
-            database=os.getenv("DATABASE"),
-            host=os.getenv("DATA_HOST"),
-            user=os.getenv("DATA_USER"),
-            password=os.getenv("DATA_PASSWORD")
+            database="for_bot",
+            host="localhost",
+            user="postgres",
+            password="2609"
         )
         cursor = database.cursor()
         cursor.execute(query)
-        if query_type == "insert":
+        data = ["insert", "create"]
+        if query_type in data:
             database.commit()
-            return "Successful inserted"
+            if query_type == "insert":
+                return "Successful inserted"
 
-        if query_type == "select":
+            elif query_type == "create":
+                return "Successful created"
+
+        else:
             return cursor.fetchall()

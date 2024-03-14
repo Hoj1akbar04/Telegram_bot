@@ -1,7 +1,11 @@
-import os
 import logging
-from dotenv import load_dotenv
+import os
+
 from aiogram import Bot, Dispatcher, executor, types
+from dotenv import load_dotenv
+
+
+from bot_button import *
 from main import Database
 
 load_dotenv()
@@ -21,13 +25,13 @@ async def send_welcome(message: types.Message):
 
     check_query = f"""SELECT * FROM users WHERE chat_id = '{chat_id}'"""
     if len(Database.connect(check_query, "select")) >= 1:
-        await message.reply(f"Hello👋 @{username}")
+        await message.answer(f"Hello👋 @{username}", reply_markup=menu_button)
 
     else:
         print(f"{first_name} start bot")
         query = f"""INSERT INTO users(first_name, last_name, username, chat_id) VALUES('{first_name}', '{last_name}', '{username}', '{chat_id}')"""
         print(f"{username} {Database.connect(query, "insert")} database")
-        await message.reply(f"Hello👋 @{username}")
+        await message.answer(f"Hello👋 @{username}", reply_markup=menu_button)
 
 
 @dp.message_handler(commands=['data'])
@@ -44,6 +48,31 @@ async def select(message: types.Message):
         Chat ID: {data[0][4]}
         Create Date: {data[0][5]}
         """)
+
+
+@dp.message_handler(lambda message: message.text == "Premyera")
+async def show_prem(message: types.Message):
+    await message.answer("Premyeralardan birini tanlang:", reply_markup=prem_button)
+
+
+@dp.message_handler(lambda message: message.text == "Serial")
+async def show_ser(message: types.Message):
+    await message.answer("Seriallardan birini tanlang:", reply_markup=ser_button)
+
+
+@dp.message_handler(lambda message: message.text == "Kinolar")
+async def show_movie(message: types.Message):
+    await message.answer("Kinolardan birini tanlang:", reply_markup=movie_button)
+
+
+@dp.message_handler(lambda message: message.text == "Multfilm")
+async def show_cartoon(message: types.Message):
+    await message.answer("Multfilmlardan birini tanlang:", reply_markup=cartoon_button)
+
+
+@dp.message_handler(lambda message: message.text == "Back")
+async def back(message: types.Message):
+    await message.answer("Bo'limlardan birini tanlang:", reply_markup=menu_button)
 
 
 @dp.message_handler()
