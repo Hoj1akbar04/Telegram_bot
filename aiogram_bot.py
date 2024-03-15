@@ -50,22 +50,6 @@ async def select(message: types.Message):
         """)
 
 
-@dp.message_handler(commands=['data'])
-async def select(message: types.Message):
-    chat_id = message.chat.id
-    query_select = f"SELECT * FROM users WHERE chat_id = '{chat_id}'"
-    data = Database.connect(query_select, "select")
-    print(data)
-    await message.reply(f"""
-        Hello👋  @{data[0][3]}
-
-        First Name: {data[0][1]}
-        Last Name: {data[0][2]}
-        Chat ID: {data[0][4]}
-        Create Date: {data[0][5]}
-        """)
-
-
 @dp.message_handler(lambda message: message.text == "◾️ Premyera ◾️️")
 async def show_prem(message: types.Message):
     await message.answer("Premyeralardan birini tanlang:", reply_markup=prem_button)
