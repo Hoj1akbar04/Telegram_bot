@@ -2,14 +2,25 @@ from main import Database
 
 
 def table():
+    users_table = f"""
+        CREATE TABLE users(
+        users_id SERIAL PRIMARY KEY,
+        first_name VARCHAR(30),
+        last_name VARCHAR(40),
+        username VARCHAR(50),
+        chat_id VARCHAR(20),
+        create_date TIMESTAMP DEFAULT now());
+    """
+
     prem_table = f"""
         CREATE TABLE premyera(
         premyera_id SERIAL PRIMARY KEY,
         name VARCHAR(50),
         continue_prem VARCHAR(40),
         create_country VARCHAR(30),
+        photo_url VARCHAR(200),
         create_date DATE,
-        join_bot_date TIMESTAMP DEFAULT now())
+        join_bot_date TIMESTAMP DEFAULT now());
     """
 
 
@@ -19,8 +30,9 @@ def table():
         name VARCHAR(50),
         continue_prem VARCHAR(40),
         create_country VARCHAR(30),
+        photo_url VARCHAR(200),
         create_date DATE,
-        join_bot_date TIMESTAMP DEFAULT now())
+        join_bot_date TIMESTAMP DEFAULT now());
     """
 
 
@@ -30,8 +42,9 @@ def table():
         name VARCHAR(50),
         continue_prem VARCHAR(40),
         create_country VARCHAR(30),
+        photo_url VARCHAR(200),
         create_date DATE,
-        join_bot_date TIMESTAMP DEFAULT now())
+        join_bot_date TIMESTAMP DEFAULT now());
     """
 
 
@@ -42,11 +55,13 @@ def table():
         continue_prem VARCHAR(40),
         serial_part SMALLINT,
         create_country VARCHAR(30),
+        photo_url VARCHAR(200),
         create_date DATE,
-        join_bot_date TIMESTAMP DEFAULT now())
+        join_bot_date TIMESTAMP DEFAULT now());
     """
 
     data = {
+        "users_table": users_table,
         "prem_table": prem_table,
         "movie_table": movie_table,
         "cartoon_table": cartoon_table,
