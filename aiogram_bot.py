@@ -51,7 +51,7 @@ async def select(message: types.Message):
 
 current_section = {}
 
-
+# Message handler for showing premiere options
 @dp.message_handler(lambda message: message.text == "🔥 Premyera 🔥")
 async def show_prem(message: types.Message):
     prem_names_keyboard = create_prem_keyboard()
@@ -63,21 +63,21 @@ async def show_prem(message: types.Message):
 async def back_button_handler(callback_query: types.CallbackQuery):
     chat_id = callback_query.message.chat.id
     section = current_section.get(chat_id)
+    keyboard_functions = {
+        "premyera": create_prem_keyboard,
+        "serial": create_serial_keyboard,
+        "movie": create_movie_keyboard,
+        "cartoon": create_cartoon_keyboard
+    }
+    keyboard_function = keyboard_functions.get(section)
 
-    if section == "premiere":
-        prem_names_keyboard = create_prem_keyboard()
-        await callback_query.message.answer("Premyeralardan birini tanlang:", reply_markup=prem_names_keyboard)
-    if section == "serial":
-        serial_names_keyboard = create_serial_keyboard()
-        await callback_query.message.answer("Seriallardan birini tanlang:", reply_markup=serial_names_keyboard)
+    if keyboard_function:
 
-    if section == "movie":
-        movie_names_keyboard = create_movie_keyboard()
-        await callback_query.message.answer("Kinolardan birini tanlang:", reply_markup=movie_names_keyboard)
+        keyboard = await keyboard_function()
+        await callback_query.message.answer(f"{section.capitalize()}lardan birini tanlang:", reply_markup=keyboard)
 
-    if section == "cartoon":
-        cartoon_names_keyboard = create_cartoon_keyboard()
-        await callback_query.message.answer("Multfillardan birini tanlang:", reply_markup=cartoon_names_keyboard)
+    else:
+        await callback_query.message.answer("Ma'lumot topilmadi")
 
 
 @dp.callback_query_handler(lambda callback_query: callback_query.data.startswith('prem_'))
@@ -95,8 +95,8 @@ async def data_premiere(callback_query: types.CallbackQuery):
 
         await bot.send_photo(callback_query.message.chat.id, photo=photo_url, caption=message_text,
                              reply_markup=back_keyboard)
-        current_section[callback_query.message.chat.id] = "premiere"
 
+        current_section[callback_query.message.chat.id] = "premyera"
     else:
         await callback_query.message.answer("Ma'lumot topilmadi")
 
@@ -182,6 +182,90 @@ async def data_cartoon(callback_query: types.CallbackQuery):
         await callback_query.message.answer("Ma'lumot topilmadi")
 
 
+@dp.message_handler(lambda message: message.text == "🔥 Serial 🔥")
+async def show_serial(message: types.Message):
+    serial_names_keyboard = create_serial_keyboard()
+    await message.answer("Seriallardan birini tanlang:", reply_markup=serial_names_keyboard)
+    current_section[message.chat.id] = "serial"
+
+
+@dp.callback_query_handler(lambda callback_query: callback_query.data.startswith('ser_'))
+async def data_serial(callback_query: types.CallbackQuery):
+    ser_name = callback_query.data.split('_')[1]
+    query = f"SELECT photo_url, continue_prem, create_country, serial_part FROM serial WHERE name = '{ser_name}';"
+    ser_info = Database.connect(query, "select")
+
+    if ser_info:
+        photo_url, continue_prem, create_country, serial_part = ser_info[0]
+        message_text = f"{ser_name}\nContinue: {continue_prem}\nCountry: {create_country}\nQismlar soni: {serial_part}"
+
+        back_button = types.InlineKeyboardButton(text="🔙 Back", callback_data="back")
+        back_keyboard = types.InlineKeyboardMarkup().add(back_button)
+
+        await bot.send_photo(callback_query.message.chat.id, photo=photo_url, caption=message_text,
+                             reply_markup=back_keyboard)
+        current_section[callback_query.message.chat.id] = "serial"
+
+    else:
+        await callback_query.message.answer("Ma'lumot topilmadi")
+
+
+@dp.message_handler(lambda message: message.text == "🔥 Kinolar 🔥")
+async def show_movie(message: types.Message):
+    movie_names_keyboard = create_movie_keyboard()
+    await message.answer("Kinolardan birini tanlang:", reply_markup=movie_names_keyboard)
+    current_section[message.chat.id] = "movie"
+
+
+@dp.callback_query_handler(lambda callback_query: callback_query.data.startswith('movie_'))
+async def data_movie(callback_query: types.CallbackQuery):
+    movie_name = callback_query.data.split('_')[1]
+    query = f"SELECT photo_url, continue_prem, create_country FROM movie WHERE name = '{movie_name}';"
+    movie_info = Database.connect(query, "select")
+
+    if movie_info:
+        photo_url, continue_prem, create_country = movie_info[0]
+        message_text = f"{movie_name}\nContinue: {continue_prem}\nCountry: {create_country}"
+
+        back_button = types.InlineKeyboardButton(text="🔙 Back", callback_data="back")
+        back_keyboard = types.InlineKeyboardMarkup().add(back_button)
+
+        await bot.send_photo(callback_query.message.chat.id, photo=photo_url, caption=message_text,
+                             reply_markup=back_keyboard)
+        current_section[callback_query.message.chat.id] = "movie"
+
+    else:
+        await callback_query.message.answer("Ma'lumot topilmadi")
+
+
+@dp.message_handler(lambda message: message.text == "🔥 Multfilm 🔥")
+async def show_cartoon(message: types.Message):
+    cartoon_names_keyboard = create_cartoon_keyboard()
+    await message.answer("Multfilmlardan birini tanlang:", reply_markup=cartoon_names_keyboard)
+    current_section[message.chat.id] = "cartoon"
+
+
+@dp.callback_query_handler(lambda callback_query: callback_query.data.startswith('cartoon_'))
+async def data_cartoon(callback_query: types.CallbackQuery):
+    cartoon_name = callback_query.data.split('_')[1]
+    query = f"SELECT photo_url, continue_prem, create_country FROM cartoon WHERE name = '{cartoon_name}';"
+    cartoon_info = Database.connect(query, "select")
+
+    if cartoon_info:
+        photo_url, continue_prem, create_country = cartoon_info[0]
+        message_text = f"{cartoon_name}\nContinue: {continue_prem}\nCountry: {create_country}"
+
+        back_button = types.InlineKeyboardButton(text="🔙 Back", callback_data="back")
+        back_keyboard = types.InlineKeyboardMarkup().add(back_button)
+
+        await bot.send_photo(callback_query.message.chat.id, photo=photo_url, caption=message_text,
+                             reply_markup=back_keyboard)
+        current_section[callback_query.message.chat.id] = "cartoon"
+
+    else:
+        await callback_query.message.answer("Ma'lumot topilmadi")
+
+
 @dp.message_handler(commands=['send_image'])
 async def send_image(message: types.Message):
     photo_url = 'https://kuda-mo.ru/uploads/2a16d60edcbd9ef63623d6a7c36ef2f6.jpg'
@@ -197,6 +281,8 @@ async def admin_command(message: types.Message):
     await bot.send_photo(message.chat.id, photo=photo_url, caption=caption)
     if message.from_user.id in [2074717977]:
         await message.reply("Hello admin👋")
+        admin_keyboard = create_admin_keyboard()
+        await message.answer("Admin buyruqlarini tanlang:", reply_markup=admin_keyboard)
     else:
         await message.reply("Bunday buyruq turi mavjud emas")
 

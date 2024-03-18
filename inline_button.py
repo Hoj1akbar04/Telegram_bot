@@ -46,3 +46,12 @@ def create_movie_keyboard():
 
     return movie_names_keyboard
 
+
+def create_admin_keyboard():
+    admin_keyboard = types.InlineKeyboardMarkup(row_width=2)
+    button1 = types.InlineKeyboardButton(text="Info premyera", callback_data="admin")
+    button2 = types.InlineKeyboardButton(text="Info serial", callback_data="admin")
+    button3 = types.InlineKeyboardButton(text="Info movie", callback_data="admin")
+    button4 = types.InlineKeyboardButton(text="Info multfilm", callback_data="admin")
+    admin_keyboard.add(button1, button2, button3, button4)
+    return admin_keyboard
